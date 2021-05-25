@@ -16,8 +16,8 @@ fn input() {
 }
 
 fn answer() {
-{{output}}
-
+{% for output in outputs }
+{% endfor %}
 }
 
 #[cfg(test)]

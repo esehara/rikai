@@ -13,6 +13,7 @@ pub enum ParagrahKind {
 pub struct Paragraph {
     pub title: String,
     raw_text: Vec<String>,
+    pub pre: Vec<String>
 }
 
 fn latex_fix(s: &String) -> String {
@@ -89,17 +90,27 @@ fn problem_elements(buf: String) -> Vec<String> {
 pub fn to_paragraph(raw_html: String) -> Paragraph {
     let fragments = scraper::Html::parse_fragment(&raw_html);
     let selector = scraper::Selector::parse("section").unwrap();
-    let text = fragments
+    let preselector = scraper::Selector::parse("pre").unwrap();
+    let section = fragments
         .select(&selector)
         .next()
-        .unwrap()
-        .text()
+        .unwrap();
+    
+    let text = section.text()
         .filter(|x| x != &"")
         .map(|x| String::from(x))
         .collect::<Vec<_>>();
+ 
+    let pre = if let Some(pre) = section.select(&preselector).next() {
+        pre.text().map(|x| String::from(x)).collect()
+    } else {
+        <Vec<String>>::new()
+    };
+
     Paragraph {
         title: String::from(&text[1]),
         raw_text: (text[2..]).to_vec(),
+        pre: pre,
     }
 }
 

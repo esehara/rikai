@@ -7,4 +7,7 @@
 
 {{output}}
 
+
+{% for example in examples %}
 {{example}}
+{% endfor %}
