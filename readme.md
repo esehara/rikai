@@ -1,4 +1,4 @@
-# Rikai(理解): Rust Code Generator for Competitive programming
+# Rikai(理解): Simple code generator written by Rust (for Competitive programming)
 
 ## td;tl
 
