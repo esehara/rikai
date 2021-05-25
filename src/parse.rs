@@ -15,9 +15,20 @@ pub struct Paragraph {
     raw_text: Vec<String>,
 }
 
+fn latex_fix(s: &String) -> String {
+    s.replace("\\leq", "<=")
+    .replace("\\dots", "...")
+    .replace("\\ldots", "...")
+}
+
 impl Paragraph {
     pub fn text(&self) -> String {
-        self.raw_text.concat()
+        let raw_text = &self.raw_text;
+        raw_text
+            .into_iter()
+            .map(|x| latex_fix(x))
+            .collect::<Vec<String>>()
+            .concat()
     }
 
     pub fn is(&self) -> ParagrahKind {
@@ -34,11 +45,17 @@ impl Paragraph {
         }
     }
 
-    pub fn lines(&self) -> Vec<String> {
-        self.text()
-            .split("\n")
-            .map(|x| String::from(x))
-            .collect::<Vec<String>>()
+    pub fn lines(&self, blank: bool) -> Vec<String> {
+        let line_strings = self.text();
+        let line_strings = line_strings.split("\n").map(|x| String::from(x));
+
+        if blank {
+            line_strings.collect::<Vec<String>>()
+        } else {
+            line_strings
+                .filter(|x| x != &"".to_string())
+                .collect::<Vec<String>>()
+        }
     }
 }
 

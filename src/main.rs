@@ -13,7 +13,8 @@ use tera::Tera;
 
 #[derive(Serialize, Deserialize)]
 struct Settings {
-    template: Option<String>,
+    template: String,
+    has_blank_line: Option<bool>,
     comment_head: String,
     comment_tail: String,
     separate_line: String,
@@ -54,41 +55,41 @@ fn main() -> io::Result<()> {
         separate_line: json.separate_line,
     };
 
-    if let Some(filename) = json.template {
-        let filepath = current_path.join(&filename);
-        if !filepath.exists() {
-            panic!("ファイルが存在しません: {}", filepath.to_str().unwrap());
-        }
-        let mut template = String::new();
-        File::open(filepath)
-            .unwrap()
-            .read_to_string(&mut template)
-            .unwrap();
-        let mut context = tera::Context::new();
+    let filepath = current_path.join(&json.template);
+    if !filepath.exists() {
+        panic!("ファイルが存在しません: {}", filepath.to_str().unwrap());
+    }
+    let mut template = String::new();
+    File::open(filepath)
+        .unwrap()
+        .read_to_string(&mut template)
+        .unwrap();
 
-        for problem in problem_elements {
-            let problem_is = problem.is();
-            let writer_lines = writer.lines(problem).concat();
-            match problem_is {
-                parse::ParagrahKind::Problem => context.insert("problem", &writer_lines),
-                parse::ParagrahKind::Limit => context.insert("limit", &writer_lines),
-                parse::ParagrahKind::Input => context.insert("input", &writer_lines),
-                parse::ParagrahKind::Output => context.insert("output", &writer_lines),
-                _ => context.insert("example", &writer_lines),
-            }
-        }
+    let mut context = tera::Context::new();
 
-        match Tera::one_off(&template, &context, false) {
-            Ok(t) => print!("{}", t),
-            Err(e) => {
-                println!("テンプレートファイルを書き出している最中にエラーが発生しました");
-                println!("{}", e);
-                ::std::process::exit(1);
-            }
+    for problem in problem_elements {
+        let problem_is = problem.is();
+        let writer_lines = if let Some(true) = json.has_blank_line {
+            writer.lines(problem, true)
+        } else {
+            writer.lines(problem, false)
+        }.concat();
+
+        match problem_is {
+            parse::ParagrahKind::Problem => context.insert("problem", &writer_lines),
+            parse::ParagrahKind::Limit => context.insert("limit", &writer_lines),
+            parse::ParagrahKind::Input => context.insert("input", &writer_lines),
+            parse::ParagrahKind::Output => context.insert("output", &writer_lines),
+            _ => context.insert("example", &writer_lines),
         }
-    } else {
-        for line in problem_elements.into_iter().map(|x| writer.lines(x)) {
-            println!("{}", line.concat());
+    }
+
+    match Tera::one_off(&template, &context, false) {
+        Ok(t) => print!("{}", t),
+        Err(e) => {
+            println!("テンプレートファイルを書き出している最中にエラーが発生しました");
+            println!("{}", e);
+            ::std::process::exit(1);
         }
     }
     Ok(())

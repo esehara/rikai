@@ -8,9 +8,9 @@ pub struct Writer {
 }
 
 impl Writer {
-    pub fn lines(&self, paragrah: parse::Paragraph) -> Vec<String> {
+    pub fn lines(&self, paragrah: parse::Paragraph, blank: bool) -> Vec<String> {
         let mut title_vec = self.title_with_separate_line(&paragrah);
-        let mut lines_vec = self.lines_with_comment_syntax(&paragrah);
+        let mut lines_vec = self.lines_with_comment_syntax(&paragrah, blank);
         title_vec.append(&mut lines_vec);
         title_vec
     }
@@ -35,7 +35,11 @@ impl Writer {
         lines
     }
 
-    pub fn lines_with_comment_syntax(&self, paragrah: &parse::Paragraph) -> Vec<String> {
-        self.add_comment_syntax_to_lines(&paragrah.lines())
+    pub fn lines_with_comment_syntax(
+        &self,
+        paragrah: &parse::Paragraph,
+        blank: bool,
+    ) -> Vec<String> {
+        self.add_comment_syntax_to_lines(&paragrah.lines(blank))
     }
 }

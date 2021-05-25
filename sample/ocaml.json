@@ -1,0 +1,7 @@
+{
+    "template": "blank.txt",
+    "has_blank_line": false,
+    "comment_head": "(* ",
+    "comment_tail": " *)",
+    "separate_line": "=============="
+}
