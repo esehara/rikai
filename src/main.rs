@@ -66,21 +66,25 @@ fn main() -> io::Result<()> {
         .unwrap();
 
     let mut context = tera::Context::new();
-    let mut example_vec = <Vec<String>>::new();
+    let mut example_vec = <Vec<parse::Example>>::new();
     for problem in problem_elements {
+        let pre = problem.pre();
         let problem_is = problem.is();
         let writer_lines = if let Some(true) = json.has_blank_line {
             writer.lines(problem, true)
         } else {
             writer.lines(problem, false)
-        }.concat();
-        
+        }
+        .concat();
         match problem_is {
             parse::ParagrahKind::Problem => context.insert("problem", &writer_lines),
             parse::ParagrahKind::Limit => context.insert("limit", &writer_lines),
             parse::ParagrahKind::Input => context.insert("output", &writer_lines),
             parse::ParagrahKind::Output => context.insert("input", &writer_lines),
-            _ => example_vec.push(writer_lines),
+            _ => example_vec.push(parse::Example {
+                text: writer_lines,
+                pre: pre.to_vec(),
+            }),
         }
     }
     context.insert("examples", &example_vec);

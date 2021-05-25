@@ -1,4 +1,5 @@
 use scraper;
+use serde::{Serialize};
 
 #[derive(Debug)]
 pub enum ParagrahKind {
@@ -9,20 +10,32 @@ pub enum ParagrahKind {
     Example,
 }
 
-#[derive(Debug)]
-pub struct Paragraph {
-    pub title: String,
-    raw_text: Vec<String>,
-    pub pre: Vec<String>
-}
-
 fn latex_fix(s: &String) -> String {
     s.replace("\\leq", "<=")
     .replace("\\dots", "...")
     .replace("\\ldots", "...")
 }
 
+#[derive(Debug)]
+pub struct Paragraph {
+    pub title: String,
+    raw_text: Vec<String>,
+    pub pre: String
+}
+
+#[derive(Debug, Serialize)]
+pub struct Example {
+    pub text: String,
+    pub pre: Vec<String>
+}
+
 impl Paragraph {
+    pub fn pre(&self) -> Vec<String> {
+        self.pre.split("\n")
+        .filter(|x| x != &"")
+        .map(|x| x.to_string())
+        .collect::<Vec<String>>()
+    }
     pub fn text(&self) -> String {
         let raw_text = &self.raw_text;
         raw_text
@@ -102,9 +115,9 @@ pub fn to_paragraph(raw_html: String) -> Paragraph {
         .collect::<Vec<_>>();
  
     let pre = if let Some(pre) = section.select(&preselector).next() {
-        pre.text().map(|x| String::from(x)).collect()
+        pre.text().map(|x| String::from(x)).collect::<Vec<String>>().concat()
     } else {
-        <Vec<String>>::new()
+        String::new()
     };
 
     Paragraph {
