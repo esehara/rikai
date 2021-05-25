@@ -1,0 +1,6 @@
+{
+    "template": "test.rs",
+    "comment_head": "// ",
+    "comment_tail": "",
+    "separate_line": "=============="
+}
