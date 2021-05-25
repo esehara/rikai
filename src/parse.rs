@@ -1,5 +1,5 @@
 use scraper;
-use serde::{Serialize};
+use serde::Serialize;
 
 #[derive(Debug)]
 pub enum ParagrahKind {
@@ -12,29 +12,30 @@ pub enum ParagrahKind {
 
 fn latex_fix(s: &String) -> String {
     s.replace("\\leq", "<=")
-    .replace("\\dots", "...")
-    .replace("\\ldots", "...")
+        .replace("\\dots", "...")
+        .replace("\\ldots", "...")
 }
 
 #[derive(Debug)]
 pub struct Paragraph {
     pub title: String,
     raw_text: Vec<String>,
-    pub pre: String
+    pub pre: String,
 }
 
 #[derive(Debug, Serialize)]
 pub struct Example {
     pub text: String,
-    pub pre: Vec<String>
+    pub pre: Vec<String>,
 }
 
 impl Paragraph {
     pub fn pre(&self) -> Vec<String> {
-        self.pre.split("\n")
-        .filter(|x| x != &"")
-        .map(|x| x.to_string())
-        .collect::<Vec<String>>()
+        self.pre
+            .split("\n")
+            .filter(|x| x != &"")
+            .map(|x| x.to_string())
+            .collect::<Vec<String>>()
     }
     pub fn text(&self) -> String {
         let raw_text = &self.raw_text;
@@ -104,18 +105,19 @@ pub fn to_paragraph(raw_html: String) -> Paragraph {
     let fragments = scraper::Html::parse_fragment(&raw_html);
     let selector = scraper::Selector::parse("section").unwrap();
     let preselector = scraper::Selector::parse("pre").unwrap();
-    let section = fragments
-        .select(&selector)
-        .next()
-        .unwrap();
-    
-    let text = section.text()
+    let section = fragments.select(&selector).next().unwrap();
+
+    let text = section
+        .text()
         .filter(|x| x != &"")
         .map(|x| String::from(x))
         .collect::<Vec<_>>();
- 
+
     let pre = if let Some(pre) = section.select(&preselector).next() {
-        pre.text().map(|x| String::from(x)).collect::<Vec<String>>().concat()
+        pre.text()
+            .map(|x| String::from(x))
+            .collect::<Vec<String>>()
+            .concat()
     } else {
         String::new()
     };
