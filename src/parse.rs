@@ -47,17 +47,13 @@ impl Paragraph {
     }
 
     pub fn is(&self) -> ParagrahKind {
-        if self.title == "問題文".to_string() {
-            ParagrahKind::Problem
-        } else if self.title == "制約".to_string() {
-            ParagrahKind::Limit
-        } else if self.title == "入力".to_string() {
-            ParagrahKind::Input
-        } else if self.title == "出力".to_string() {
-            ParagrahKind::Output
-        } else {
-            ParagrahKind::Example
-        }
+        match &self.title[..] {
+            | "問題文" => ParagrahKind::Problem,
+            | "制約" => ParagrahKind::Limit,
+            | "入力" => ParagrahKind::Input,
+            | "出力" => ParagrahKind::Output,
+            | _ => ParagrahKind::Example
+            }
     }
 
     pub fn lines(&self, blank: bool) -> Vec<String> {
