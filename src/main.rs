@@ -1,8 +1,8 @@
 extern crate rikai;
 
+use rikai::example;
 use rikai::parse;
 use rikai::writer;
-use rikai::example;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use std::fs::File;
@@ -85,7 +85,11 @@ fn main() -> io::Result<()> {
             _ => example_vec.push(example::Example::new(writer_lines, pre)),
         }
     }
+    let timetext = chrono::Local::now()
+        .format("%Y年%m月%d日 %H時%M分%S秒 %Z")
+        .to_string();
     context.insert("examples", &example_vec);
+    context.insert("time", &timetext);
     match Tera::one_off(&template, &context, false) {
         Ok(t) => print!("{}", t),
         Err(e) => {

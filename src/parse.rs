@@ -41,12 +41,12 @@ impl Paragraph {
 
     pub fn is(&self) -> ParagrahKind {
         match &self.title[..] {
-            | "問題文" => ParagrahKind::Problem,
-            | "制約" => ParagrahKind::Limit,
-            | "入力" => ParagrahKind::Input,
-            | "出力" => ParagrahKind::Output,
-            | _ => ParagrahKind::Example
-            }
+            "問題文" => ParagrahKind::Problem,
+            "制約" => ParagrahKind::Limit,
+            "入力" => ParagrahKind::Input,
+            "出力" => ParagrahKind::Output,
+            _ => ParagrahKind::Example,
+        }
     }
 
     pub fn lines(&self, blank: bool) -> Vec<String> {
