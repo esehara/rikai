@@ -6,7 +6,7 @@ pub struct Example {
     pub pre: Vec<String>,
     pub pre_oneline: String,
     pub pre_is_oneline: bool,
-    pub pre_has: bool
+    pub pre_has: bool,
 }
 
 impl Example {
@@ -16,7 +16,7 @@ impl Example {
             pre_is_oneline: &pre.len() == &1,
             pre_has: &pre.len() != &0,
             pre_oneline: (&pre.concat()).to_string(),
-            pre: pre
-        }   
+            pre: pre,
+        }
     }
 }

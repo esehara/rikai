@@ -1,6 +1,10 @@
 
 {{problem}}
 
+let int_list_of_string s =
+  String.split_on_char ' ' s
+  |> List.map(int_of_string);;
+
 {{limit}}
 
 {{input}}
