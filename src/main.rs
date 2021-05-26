@@ -2,6 +2,7 @@ extern crate rikai;
 
 use rikai::parse;
 use rikai::writer;
+use rikai::example;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use std::fs::File;
@@ -66,7 +67,7 @@ fn main() -> io::Result<()> {
         .unwrap();
 
     let mut context = tera::Context::new();
-    let mut example_vec = <Vec<parse::Example>>::new();
+    let mut example_vec = <Vec<example::Example>>::new();
     for problem in problem_elements {
         let pre = problem.pre();
         let problem_is = problem.is();
@@ -81,10 +82,7 @@ fn main() -> io::Result<()> {
             parse::ParagrahKind::Limit => context.insert("limit", &writer_lines),
             parse::ParagrahKind::Input => context.insert("output", &writer_lines),
             parse::ParagrahKind::Output => context.insert("input", &writer_lines),
-            _ => example_vec.push(parse::Example {
-                text: writer_lines,
-                pre: pre.to_vec(),
-            }),
+            _ => example_vec.push(example::Example::new(writer_lines, pre)),
         }
     }
     context.insert("examples", &example_vec);

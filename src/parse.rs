@@ -1,5 +1,4 @@
 use scraper;
-use serde::Serialize;
 
 #[derive(Debug)]
 pub enum ParagrahKind {
@@ -21,12 +20,6 @@ pub struct Paragraph {
     pub title: String,
     raw_text: Vec<String>,
     pub pre: String,
-}
-
-#[derive(Debug, Serialize)]
-pub struct Example {
-    pub text: String,
-    pub pre: Vec<String>,
 }
 
 impl Paragraph {
