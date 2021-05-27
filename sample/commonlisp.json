@@ -1,0 +1,7 @@
+{
+    "template": "template.lisp",
+    "has_blank_line": true,
+    "comment_head": ";;",
+    "comment_tail": "",
+    "separate_line": "=============="
+}
