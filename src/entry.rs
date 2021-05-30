@@ -1,6 +1,13 @@
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
+pub struct Input {
+    pub text: String,
+    pub args: Vec<String>,
+    pub args_line: String,
+}
+
+#[derive(Debug, Serialize)]
 pub struct Example {
     pub text: String,
     pub pre: Vec<String>,

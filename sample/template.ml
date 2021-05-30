@@ -19,10 +19,16 @@ let string_1_list_of_string x =
 
 {{limit}}
 
-{{input}}
+(* ----- *)
+{{input.text}}
+let parse_line s =
+  let raw = List.split_with_char ' ' s in
+{% for arg in input.args %}
+  let {{arg}} = List.nth raw {{loop.index}} in {% endfor %}
+  ({{input.args_line}});;
+(* ---- *)
 
 {{output}}
-
 
 {% for example in examples %}
 {{example.text}}

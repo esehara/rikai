@@ -1,6 +1,6 @@
 extern crate rikai;
 
-use rikai::example;
+use rikai::entry;
 use rikai::parse;
 use rikai::writer;
 use serde::{Deserialize, Serialize};
@@ -54,6 +54,7 @@ fn main() -> io::Result<()> {
         comment_head: json.comment_head,
         comment_tail: json.comment_tail,
         separate_line: json.separate_line,
+        opt_blank: json.has_blank_line
     };
 
     let filepath = current_path.join(&json.template);
@@ -67,29 +68,26 @@ fn main() -> io::Result<()> {
         .unwrap();
 
     let mut context = tera::Context::new();
-    let mut example_vec = <Vec<example::Example>>::new();
+    let mut example_vec = <Vec<entry::Example>>::new();
+
     for problem in problem_elements {
-        let pre = problem.pre();
-        let problem_is = problem.is();
-        let writer_lines = if let Some(true) = json.has_blank_line {
-            writer.lines(problem, true)
-        } else {
-            writer.lines(problem, false)
-        }
-        .concat();
-        match problem_is {
+        let writer_lines = writer.lines(&problem).concat();
+        match problem.is() {
             parse::ParagrahKind::Problem => context.insert("problem", &writer_lines),
             parse::ParagrahKind::Limit => context.insert("limit", &writer_lines),
-            parse::ParagrahKind::Input => context.insert("output", &writer_lines),
-            parse::ParagrahKind::Output => context.insert("input", &writer_lines),
-            _ => example_vec.push(example::Example::new(writer_lines, pre)),
+            parse::ParagrahKind::Input => context.insert("input", &writer.to_input(&problem)),
+            parse::ParagrahKind::Output => context.insert("output", &writer_lines),
+            _ => example_vec.push(entry::Example::new(writer_lines, problem.pre())),
         }
     }
+
     let timetext = chrono::Local::now()
         .format("%Y年%m月%d日 %H時%M分%S秒 %Z")
         .to_string();
+    
     context.insert("examples", &example_vec);
     context.insert("time", &timetext);
+    
     match Tera::one_off(&template, &context, false) {
         Ok(t) => print!("{}", t),
         Err(e) => {
