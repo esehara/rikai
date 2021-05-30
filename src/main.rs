@@ -54,7 +54,7 @@ fn main() -> io::Result<()> {
         comment_head: json.comment_head,
         comment_tail: json.comment_tail,
         separate_line: json.separate_line,
-        opt_blank: json.has_blank_line
+        opt_blank: json.has_blank_line,
     };
 
     let filepath = current_path.join(&json.template);
@@ -84,10 +84,10 @@ fn main() -> io::Result<()> {
     let timetext = chrono::Local::now()
         .format("%Y年%m月%d日 %H時%M分%S秒 %Z")
         .to_string();
-    
+
     context.insert("examples", &example_vec);
     context.insert("time", &timetext);
-    
+
     match Tera::one_off(&template, &context, false) {
         Ok(t) => print!("{}", t),
         Err(e) => {

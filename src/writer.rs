@@ -1,6 +1,6 @@
+use crate::entry;
 use crate::parse;
 use crate::thinker;
-use crate::entry;
 
 #[derive(Debug)]
 pub struct Writer {
@@ -14,7 +14,7 @@ impl Writer {
     fn has_blank(&self) -> bool {
         match self.opt_blank {
             Some(x) => x,
-            None => false
+            None => false,
         }
     }
 
@@ -60,7 +60,7 @@ impl Writer {
         entry::Input {
             text: self.lines(paragrah).concat(),
             args: args,
-            args_line: arg_line
+            args_line: arg_line,
         }
     }
 }
